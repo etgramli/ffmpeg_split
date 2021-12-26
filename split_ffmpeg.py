@@ -99,6 +99,9 @@ def convertChapters(chapters):
       output = e.output
       raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 
-if __name__ == '__main__':
+def main():
   chapters = getChapters()
   convertChapters(chapters)
+
+if __name__ == '__main__':
+  main()
