@@ -58,11 +58,11 @@ def parseChapters(filename):
   return chapters
 
 def getChapters():
-  parser = OptionParser(usage="usage: %prog [options] filename", version="%prog 1.0")
-  parser.add_option("-f", "--file",dest="infile", help="Input File", metavar="FILE")
+  parser = OptionParser(usage="usage: %prog -i filename", version="%prog 1.0")
+  parser.add_option("-i", "--input",dest="infile", help="Input File", metavar="FILE")
   (options, args) = parser.parse_args()
   if not options.infile:
-    parser.error('Filename required')
+    parser.error('Input file ("-i") required')
   chapters = parseChapters(options.infile)
   fbase, fext = os.path.splitext(options.infile)
   path, file = os.path.split(options.infile)
