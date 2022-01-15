@@ -63,13 +63,16 @@ def getChapters(infile):
   path, file = os.path.split(infile)
   newdir, fext = os.path.splitext( basename(infile) )
 
-  os.mkdir(path + "/" + newdir)
+  out_path = path + "/" + newdir
+  if not path:
+	  out_path = newdir
+  os.mkdir(out_path)
 
   for chap in chapters:
     chap['name'] = chap['name'].replace('/',':')
     chap['name'] = chap['name'].replace("'","\'")
     print "start:" +  chap['start']
-    chap['outfile'] = path + "/" + newdir + "/" + re.sub("[^-a-zA-Z0-9_.():' ]+", '', chap['name']) + fext
+    chap['outfile'] = out_path + "/" + re.sub("[^-a-zA-Z0-9_.():' ]+", '', chap['name']) + fext
     chap['origfile'] = infile
     print chap['outfile']
   return chapters
