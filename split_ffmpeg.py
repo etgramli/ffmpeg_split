@@ -12,48 +12,32 @@ def parseChapters(filename):
   chapters = []
   command = [ "ffprobe", '-i', filename]
   output = ""
-  m = None
-  title = None
-  chapter_match = None
+
   try:
-    # ffmpeg requires an output file and so it errors
-    # when it does not get one so we need to capture stderr,
-    # not stdout.
+    # Use ffprobe instead of ffmpeg since the latter one throws an error if no output file is specified.
     output = sp.check_output(command, stderr=sp.STDOUT, universal_newlines=True)
   except CalledProcessError(e):
     output = e.output
 
   num = 1
-
+  chapter_match = None
+  title = None
   for line in iter(output.splitlines()):
-    x = re.match(r".*title.*: (.*)", line)
-    print("x:")
-    pprint.pprint(x)
+    current_title_match = re.match(r".*title.*: (.*)", line)
 
-    print("title:")
-    pprint.pprint(title)
-
-    if x == None:
-      m1 = re.match(r".*Chapter #(\d+:\d+): start (\d+\.\d+), end (\d+\.\d+).*", line)
+    if current_title_match == None:
       title = None
+      current_chapter_match = re.match(r".*Chapter #(\d+:\d+): start (\d+\.\d+), end (\d+\.\d+).*", line)
+      if current_chapter_match != None:
+        chapter_match = current_chapter_match
     else:
-      title = x.group(1)
-
-    if m1 != None:
-      chapter_match = m1
-
-    print("chapter_match:")
-    pprint.pprint(chapter_match)
+      title = current_title_match.group(1)
 
     if title != None and chapter_match != None:
-      m = chapter_match
-      pprint.pprint(title)
-    else:
-      m = None
-
-    if m != None:
-      chapters.append({ "name": repr(num) + " - " + title, "start": m.group(2), "end": m.group(3)})
+      chapters.append({ "name": repr(num) + " - " + title, "start": chapter_match.group(2), "end": chapter_match.group(3)})
       num += 1
+      chapter_match = None
+      title = None
 
   return chapters
 
